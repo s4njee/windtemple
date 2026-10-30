@@ -238,8 +238,14 @@ Story format: `ID Title [tier] (size)`. Sizes: S ≈ a day or less, M ≈ a few 
 
   _`hello`: up to 400 streamers, a strip of twelve rows each, a pure function of index and time in one instanced draw. Each trails at an angle set by the wind and the passing gust. A wave runs from its knot to its free end, growing along it, and it twists slowly, showing its darker back by turns. Tied in bunches of three at random angles, with far streamers shorter, narrower and dimmer, because a row of them was a grating. 0.31 ms on Dawn, 0.52 ms in Chrome (0.42 to 0.78 over 3 loads): Tier A. Flash `none`, pattern `low`, and motion inside the caps up to the strong dose. It started in all eight browser-check views with no console errors._
 
-- [ ] **1.3 Repository and CI** (S) — its own git repository (`s4njee/windtemple`). The other families' repositories were created private and made public on the user's word, since private repositories cannot run Actions on this account. The CI workflow runs on software Vulkan (lint, format, typecheck, tests, build) and is green once.
-- [ ] **1.4 Deploy** (S) — Cloudflare Pages project `windtemple` (classic, created with `--force`), and an `npm run deploy` that builds, checks the bundle and uploads `dist`.
+- [x] **1.3 Repository and CI** (S) — its own git repository (`s4njee/windtemple`). The other families' repositories were created private and made public on the user's word, since private repositories cannot run Actions on this account. The CI workflow runs on software Vulkan (lint, format, typecheck, tests, build) and is green once.
+
+  _Public repository `s4njee/windtemple`, created private and made public on the user's word. CI green on its first run once public (446ce5e)._
+
+- [x] **1.4 Deploy** (S) — Cloudflare Pages project `windtemple` (classic, created with `--force`), and an `npm run deploy` that builds, checks the bundle and uploads `dist`.
+
+  _Live at <https://windtemple.pages.dev>, deployed from 446ce5e (classic Pages project, created with `--force` from a scratch directory)._
+
 - [ ] **1.5 Posters, catalogue and the holofx site** (S) — posters from held frames, `catalogue.json`, and Wind Temple in the holofx site's dropdown, lab and effect pages.
 
   _`hello`'s poster (6 kB) and `catalogue.json` done. Still to do: the holofx site._
