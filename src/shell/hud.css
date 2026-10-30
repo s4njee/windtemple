@@ -1,0 +1,179 @@
+/*
+ * The HUD sits on top of moving imagery, so it has its own near-opaque surface instead of
+ * borrowing the page's: text keeps its contrast whatever is behind it, in both themes.
+ */
+.wd-hud {
+  display: flex;
+  flex-direction: column;
+  width: 280px;
+  /* Page gutters, the stage border, the HUD's own offset on both sides, and a scrollbar. */
+  max-width: calc(100vw - 80px);
+  max-height: calc(50vh - 2 * var(--wd-space-3));
+  border: 1px solid var(--wd-border);
+  border-radius: var(--wd-radius-m);
+  /* Opaque: readouts must stay legible over any effect and any page context beneath. */
+  background: var(--wd-surface);
+  color: var(--wd-text);
+  font-size: var(--wd-text-s);
+}
+
+.wd-hud [hidden] {
+  display: none;
+}
+
+.wd-hud__head {
+  display: flex;
+  align-items: center;
+  gap: var(--wd-space-2);
+  padding: var(--wd-space-1) var(--wd-space-1) var(--wd-space-1) var(--wd-space-3);
+}
+
+.wd-hud__summary {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  color: var(--wd-text-muted);
+  text-align: right;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.wd-hud__toggle {
+  flex: none;
+  margin-left: auto;
+}
+
+.wd-hud__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--wd-space-2);
+  padding: var(--wd-space-1) var(--wd-space-3) var(--wd-space-3);
+  overflow-y: auto;
+  border-top: 1px solid var(--wd-border);
+  padding-top: var(--wd-space-3);
+}
+
+.wd-hud__big {
+  font-size: var(--wd-text-l);
+  line-height: 1.1;
+}
+
+.wd-hud__fps {
+  font-family: var(--wd-font-mono);
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}
+
+.wd-hud__rows {
+  display: flex;
+  flex-direction: column;
+  gap: var(--wd-space-1);
+  margin: 0;
+}
+
+.wd-hud__passes {
+  display: flex;
+  flex-direction: column;
+  gap: var(--wd-space-1);
+}
+
+.wd-hud__row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--wd-space-3);
+}
+
+.wd-hud__row--pass {
+  padding-left: var(--wd-space-3);
+}
+
+.wd-hud__term {
+  flex: none;
+  color: var(--wd-text-muted);
+  font-size: var(--wd-text-xs);
+}
+
+.wd-hud__value {
+  margin: 0;
+  min-width: 0;
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+
+.wd-hud__status {
+  height: 18px;
+  vertical-align: baseline;
+  border-color: currentColor;
+  font-weight: 600;
+}
+
+.wd-hud__status[data-level='within'] {
+  color: var(--wd-tier-a);
+}
+
+.wd-hud__status[data-level='near'] {
+  color: var(--wd-tier-b);
+}
+
+.wd-hud__status[data-level='over'] {
+  color: var(--wd-tier-c);
+}
+
+.wd-hud__note {
+  font-size: var(--wd-text-xs);
+  line-height: 1.4;
+}
+
+.wd-hud__spark {
+  display: block;
+  width: 100%;
+  height: 32px;
+  border-bottom: 1px solid var(--wd-border);
+  overflow: visible;
+}
+
+.wd-hud__spark-line {
+  fill: none;
+  stroke: var(--wd-accent);
+  stroke-width: 1.5;
+  vector-effect: non-scaling-stroke;
+}
+
+.wd-hud__spark-ref {
+  stroke: var(--wd-text-muted);
+  stroke-dasharray: 3 3;
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.wd-hud__scales {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--wd-space-1);
+}
+
+.wd-hud__scale {
+  justify-content: center;
+  padding: 0;
+}
+
+.wd-hud__details-summary {
+  color: var(--wd-text-muted);
+  font-size: var(--wd-text-xs);
+  cursor: pointer;
+}
+
+.wd-hud__details-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--wd-space-2);
+  padding-top: var(--wd-space-2);
+}
+
+.wd-hud__features {
+  margin: 0;
+  color: var(--wd-text-muted);
+  font-size: var(--wd-text-xs);
+  overflow-wrap: anywhere;
+}

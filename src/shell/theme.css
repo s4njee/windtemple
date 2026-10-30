@@ -1,0 +1,253 @@
+/*
+ * Design tokens and the few primitives every shell component shares.
+ * The effects carry the page: chrome stays quiet, flat, and low-contrast against them.
+ * Components use these tokens only; no new colours, radii, or font sizes elsewhere.
+ *
+ * Light and dark equally: cloth, smoke and sky read differently over each, and both are tested.
+ * Neutrals are cool greys, a little blue, like air.
+ * The accent is the only lilac; tier colours stay away from it.
+ */
+
+:root {
+  color-scheme: dark;
+
+  --wd-font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --wd-font-mono: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+
+  --wd-text-xs: 0.75rem;
+  --wd-text-s: 0.8125rem;
+  --wd-text-m: 0.9375rem;
+  --wd-text-l: 1.25rem;
+  --wd-text-xl: 1.75rem;
+
+  --wd-space-1: 4px;
+  --wd-space-2: 8px;
+  --wd-space-3: 12px;
+  --wd-space-4: 16px;
+  --wd-space-5: 24px;
+  --wd-space-6: 40px;
+
+  --wd-radius-s: 4px;
+  --wd-radius-m: 8px;
+  --wd-radius-l: 14px;
+
+  --wd-bg: light-dark(#f4f6f8, #0a0c0f);
+  --wd-surface: light-dark(#fcfdfe, #11141a);
+  --wd-surface-2: light-dark(#e6eaef, #1a1e25);
+  --wd-border: light-dark(#cfd6de, #2a313b);
+  --wd-text: light-dark(#0f1419, #e9eef4);
+  --wd-text-muted: light-dark(#56606c, #9aa5b2);
+  --wd-accent: light-dark(#7438c2, #c79bff);
+  --wd-on-accent: light-dark(#fcfdfe, #160a26);
+  --wd-focus: light-dark(#7438c2, #dcc4ff);
+
+  /* Practicality tiers: A drop-in, B feature, C showpiece. Hues clear of the lilac
+     accent: green, teal and amber (Tier B moved from violet to teal, as in Moon Temple). */
+  --wd-tier-a: light-dark(#1f7a4d, #6fd6a0);
+  --wd-tier-b: light-dark(#0b6f78, #5fcfd8);
+  --wd-tier-c: light-dark(#8a5300, #f2c46f);
+
+  --wd-header-height: 52px;
+}
+
+:root[data-theme='light'] {
+  color-scheme: light;
+}
+
+:root[data-theme='auto'] {
+  color-scheme: light dark;
+}
+
+/*
+ * A subtree can be shown as the other kind of page (the effect stage does this, story 2.7): the
+ * tokens are light-dark() values, so they follow whatever colour scheme the element has.
+ */
+[data-page='light'] {
+  color-scheme: light;
+}
+
+[data-page='dark'] {
+  color-scheme: dark;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background: var(--wd-bg);
+  color: var(--wd-text);
+  font: var(--wd-text-m) / 1.5 var(--wd-font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+}
+
+a {
+  color: var(--wd-accent);
+  text-underline-offset: 0.15em;
+}
+
+:focus-visible {
+  outline: 2px solid var(--wd-focus);
+  outline-offset: 2px;
+}
+
+/* Numbers and code: tabular so readouts do not jitter as they update. */
+.wd-data {
+  font-family: var(--wd-font-mono);
+  font-size: var(--wd-text-s);
+  font-variant-numeric: tabular-nums;
+}
+
+.wd-muted {
+  color: var(--wd-text-muted);
+}
+
+.wd-label {
+  color: var(--wd-text-muted);
+  font-size: var(--wd-text-xs);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.wd-button {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--wd-space-2);
+  min-height: 32px;
+  padding: 0 var(--wd-space-3);
+  border: 1px solid var(--wd-border);
+  border-radius: var(--wd-radius-m);
+  background: var(--wd-surface);
+  color: var(--wd-text);
+  font: inherit;
+  font-size: var(--wd-text-s);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.wd-button:hover {
+  background: var(--wd-surface-2);
+}
+
+.wd-button[aria-pressed='true'],
+.wd-button--primary {
+  border-color: var(--wd-accent);
+  background: var(--wd-accent);
+  color: var(--wd-on-accent);
+}
+
+.wd-button--quiet {
+  border-color: transparent;
+  background: transparent;
+}
+
+.wd-chip {
+  display: inline-flex;
+  align-items: center;
+  height: 22px;
+  padding: 0 var(--wd-space-2);
+  border: 1px solid var(--wd-border);
+  border-radius: 999px;
+  color: var(--wd-text-muted);
+  font-size: var(--wd-text-xs);
+  white-space: nowrap;
+}
+
+/* Tier chips: add data-tier="A" | "B" | "C". */
+.wd-chip[data-tier] {
+  border-color: currentColor;
+  font-weight: 600;
+}
+
+.wd-chip[data-tier='A'] {
+  color: var(--wd-tier-a);
+}
+
+.wd-chip[data-tier='B'] {
+  color: var(--wd-tier-b);
+}
+
+.wd-chip[data-tier='C'] {
+  color: var(--wd-tier-c);
+}
+
+.wd-panel {
+  border: 1px solid var(--wd-border);
+  border-radius: var(--wd-radius-l);
+  background: var(--wd-surface);
+}
+
+.wd-tabs {
+  display: flex;
+  gap: var(--wd-space-4);
+  border-bottom: 1px solid var(--wd-border);
+}
+
+.wd-tab {
+  margin-bottom: -1px;
+  padding: var(--wd-space-2) 0;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  background: none;
+  color: var(--wd-text-muted);
+  font: inherit;
+  font-size: var(--wd-text-s);
+  cursor: pointer;
+}
+
+.wd-tab[aria-selected='true'] {
+  border-bottom-color: var(--wd-accent);
+  color: var(--wd-text);
+}
+
+/* Long-form text: write-ups and notes. */
+.wd-prose {
+  max-width: 68ch;
+  line-height: 1.65;
+}
+
+.wd-prose > * + * {
+  margin-top: var(--wd-space-4);
+}
+
+.wd-prose h2 {
+  margin-top: var(--wd-space-5);
+  font-size: var(--wd-text-l);
+}
+
+.wd-prose h3 {
+  font-size: var(--wd-text-m);
+}
+
+.wd-prose code {
+  padding: 0.1em 0.3em;
+  border-radius: var(--wd-radius-s);
+  background: var(--wd-surface-2);
+  font-family: var(--wd-font-mono);
+  font-size: 0.9em;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}

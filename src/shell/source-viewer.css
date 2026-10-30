@@ -1,0 +1,107 @@
+.wd-source {
+  display: flex;
+  flex-direction: column;
+  gap: var(--wd-space-3);
+  min-width: 0;
+}
+
+.wd-source__bar,
+.wd-source__group,
+.wd-source__caption {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--wd-space-2);
+}
+
+.wd-source__related {
+  display: flex;
+  flex-direction: column;
+  gap: var(--wd-space-2);
+}
+
+.wd-source__related[hidden] {
+  display: none;
+}
+
+.wd-source__bar {
+  justify-content: space-between;
+  gap: var(--wd-space-3);
+}
+
+.wd-source__caption {
+  justify-content: space-between;
+  min-height: 20px;
+}
+
+.wd-source__caption > p {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.wd-source__status {
+  color: var(--wd-text-muted);
+  font-size: var(--wd-text-xs);
+}
+
+.wd-source__status[data-state='error'] {
+  color: var(--wd-tier-c);
+}
+
+.wd-source__button {
+  /* Rows of file names stay compact on narrow screens. */
+  min-height: 28px;
+  padding: 0 var(--wd-space-3);
+}
+
+/* Code block: shared by the source viewer and fenced blocks in the notes. */
+pre.wd-source__code {
+  margin: 0;
+  padding: var(--wd-space-3) 0;
+  overflow-x: auto;
+  border: 1px solid var(--wd-border);
+  border-radius: var(--wd-radius-m);
+  background: var(--wd-surface);
+  color: var(--wd-text);
+  font-family: var(--wd-font-mono);
+  font-size: var(--wd-text-s);
+  line-height: 1.6;
+  tab-size: 2;
+  counter-reset: wd-line;
+}
+
+pre.wd-source__code code {
+  display: block;
+  width: max-content;
+  min-width: 100%;
+  padding: 0;
+  background: none;
+  font: inherit;
+}
+
+.wd-source__line {
+  display: block;
+  padding-right: var(--wd-space-4);
+  white-space: pre;
+  counter-increment: wd-line;
+}
+
+/* The gutter stays put while long lines scroll underneath it. */
+.wd-source__line::before {
+  content: counter(wd-line);
+  display: inline-block;
+  position: sticky;
+  left: 0;
+  min-width: calc(var(--wd-source-digits, 3) * 1ch + var(--wd-space-3) + var(--wd-space-2));
+  margin-right: var(--wd-space-3);
+  padding-left: var(--wd-space-3);
+  padding-right: var(--wd-space-2);
+  background: var(--wd-surface);
+  color: var(--wd-text-muted);
+  text-align: right;
+  user-select: none;
+}
+
+.wd-source__line > span {
+  color: light-dark(var(--shiki-light), var(--shiki-dark));
+}

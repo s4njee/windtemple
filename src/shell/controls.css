@@ -1,0 +1,132 @@
+.wd-controls {
+  display: flex;
+  flex-direction: column;
+  gap: var(--wd-space-3);
+  min-width: 0;
+}
+
+.wd-controls__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--wd-space-2);
+}
+
+.wd-controls__actions,
+.wd-controls__group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--wd-space-2);
+}
+
+.wd-controls__presets {
+  display: flex;
+  flex-direction: column;
+  gap: var(--wd-space-2);
+}
+
+.wd-controls__presets:empty {
+  display: none;
+}
+
+.wd-controls__select,
+.wd-controls__link {
+  width: 100%;
+  min-height: 32px;
+  padding: 0 var(--wd-space-2);
+  border: 1px solid var(--wd-border);
+  border-radius: var(--wd-radius-m);
+  background: var(--wd-surface);
+  color: var(--wd-text);
+  font: inherit;
+  font-size: var(--wd-text-s);
+}
+
+.wd-controls__link {
+  text-overflow: ellipsis;
+}
+
+.wd-controls__status {
+  min-height: 1.5em;
+  font-size: var(--wd-text-s);
+}
+
+.wd-controls__status:empty {
+  display: none;
+}
+
+/* Tweakpane, mapped onto the site tokens. Its variables inherit, so setting them on the host
+   themes it in both colour schemes (the tokens resolve per scheme). */
+.wd-controls__pane {
+  --tp-base-background-color: var(--wd-surface);
+  --tp-base-border-radius: var(--wd-radius-l);
+  --tp-base-font-family: var(--wd-font-sans);
+  --tp-base-shadow-color: transparent;
+  --tp-blade-border-radius: var(--wd-radius-s);
+  --tp-blade-horizontal-padding: var(--wd-space-2);
+  --tp-blade-value-width: 62%;
+  --tp-container-horizontal-padding: var(--wd-space-3);
+  --tp-container-vertical-padding: var(--wd-space-2);
+  --tp-container-unit-spacing: var(--wd-space-1);
+  --tp-container-unit-size: 32px;
+  --tp-container-background-color: var(--wd-surface-2);
+  --tp-container-background-color-hover: var(--wd-surface-2);
+  --tp-container-background-color-focus: var(--wd-surface-2);
+  --tp-container-background-color-active: var(--wd-surface-2);
+  --tp-container-foreground-color: var(--wd-text);
+  --tp-label-foreground-color: var(--wd-text-muted);
+  --tp-input-background-color: var(--wd-surface-2);
+  --tp-input-background-color-hover: var(--wd-border);
+  --tp-input-background-color-focus: var(--wd-border);
+  --tp-input-background-color-active: var(--wd-border);
+  --tp-input-foreground-color: var(--wd-text);
+  /* Slider handles use the button colours. */
+  --tp-button-background-color: var(--wd-accent);
+  --tp-button-background-color-hover: var(--wd-accent);
+  --tp-button-background-color-focus: var(--wd-accent);
+  --tp-button-background-color-active: var(--wd-accent);
+  --tp-button-foreground-color: var(--wd-on-accent);
+  --tp-groove-foreground-color: var(--wd-border);
+  --tp-monitor-background-color: var(--wd-surface-2);
+  --tp-monitor-foreground-color: var(--wd-text-muted);
+}
+
+.wd-controls__pane .tp-rotv {
+  width: 100%;
+  border: 1px solid var(--wd-border);
+  box-shadow: none;
+  font-size: var(--wd-text-s);
+  font-weight: 400;
+  line-height: 1.4;
+}
+
+.wd-controls__pane .tp-lblv_l {
+  padding-right: var(--wd-space-2);
+}
+
+.wd-controls__pane .tp-txtv_i,
+.wd-controls__pane .tp-sldtxtv_t,
+.wd-controls__pane .tp-lstv_s {
+  font-size: var(--wd-text-s);
+}
+
+.wd-controls__pane .tp-txtv_i,
+.wd-controls__pane .tp-lstv_s {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Tweakpane removes outlines and signals focus by background alone. */
+.wd-controls__pane .tp-rotv :focus-visible {
+  outline: 2px solid var(--wd-focus);
+  outline-offset: 1px;
+}
+
+.wd-controls__pane .tp-popv {
+  border: 1px solid var(--wd-border);
+  box-shadow: none;
+}
+
+.wd-controls__pane .tp-rotv_c > .tp-cntv {
+  padding-block: var(--wd-space-2);
+}
