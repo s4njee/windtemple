@@ -444,67 +444,72 @@ function dyeInside(
 }
 
 describe('a steady wind round solid shapes', () => {
-  it('holds the velocity at solid faces to zero, keeps dye out of the shapes, and the flow is real', async () => {
-    const device = await getTestDevice();
-    // 64 cells (Water Temple used 96, which took 11 s on CI's software rasteriser).
-    const fluid = createSolver(device, { boundary: 'open', vorticity: 8, viscosity: 0.0002 }, 64);
-    const shapes = createObstacleShapes({ device, fluid });
-    shapes.set([
-      { kind: 'circle', x: 0.28, y: 0.5, size: [0.09, 0.09] },
-      { kind: 'box', x: 0.55, y: 0.3, size: [0.012, 0.12], rotation: 0.4 },
-      { kind: 'wing', x: 0.75, y: 0.62, size: [0.18, 0.05], rotation: 0.2 },
-      { kind: 'rounded-box', x: 0.5, y: 0.8, size: [0.07, 0.04], radius: 0.02 },
-    ]);
-    tunnel(shapes, 1);
-    // Dye released upstream, in rows, every few steps.
-    for (let k = 0; k < 30; k++) {
-      for (let r = 0; r < 8; r++) {
-        const y = 0.1 + 0.1 * r;
-        fluid.addDye([0.02, y], [0.05, y], 0.012, [1, 1, 1, 1]);
+  // Slow on CI's software Vulkan: it ran past 30 s there once, though it passes in seconds on a GPU.
+  it(
+    'holds the velocity at solid faces to zero, keeps dye out of the shapes, and the flow is real',
+    { timeout: 120_000 },
+    async () => {
+      const device = await getTestDevice();
+      // 64 cells (Water Temple used 96, which took 11 s on CI's software rasteriser).
+      const fluid = createSolver(device, { boundary: 'open', vorticity: 8, viscosity: 0.0002 }, 64);
+      const shapes = createObstacleShapes({ device, fluid });
+      shapes.set([
+        { kind: 'circle', x: 0.28, y: 0.5, size: [0.09, 0.09] },
+        { kind: 'box', x: 0.55, y: 0.3, size: [0.012, 0.12], rotation: 0.4 },
+        { kind: 'wing', x: 0.75, y: 0.62, size: [0.18, 0.05], rotation: 0.2 },
+        { kind: 'rounded-box', x: 0.5, y: 0.8, size: [0.07, 0.04], radius: 0.02 },
+      ]);
+      tunnel(shapes, 1);
+      // Dye released upstream, in rows, every few steps.
+      for (let k = 0; k < 30; k++) {
+        for (let r = 0; r < 8; r++) {
+          const y = 0.1 + 0.1 * r;
+          fluid.addDye([0.02, y], [0.05, y], 0.012, [1, 1, 1, 1]);
+        }
+        await submit(device, (e) => {
+          shapes.rasterize(e);
+          fluid.advance(e, 3);
+        });
       }
-      await submit(device, (e) => {
-        shapes.rasterize(e);
-        fluid.advance(e, 3);
-      });
-    }
-    const { width, height } = fluid.grid;
-    const mask = await readMask(device, fluid);
-    const solid = solidAt(mask, width, height);
-    const v = await readVelocity(device, fluid);
-    expect(allFinite(v.data)).toBe(true);
+      const { width, height } = fluid.grid;
+      const mask = await readMask(device, fluid);
+      const solid = solidAt(mask, width, height);
+      const v = await readVelocity(device, fluid);
+      expect(allFinite(v.data)).toBe(true);
 
-    const faces = solidFaces(v, solid);
-    expect(faces.length).toBeGreaterThan(150);
-    let worst = 0;
-    for (const f of faces) {
-      worst = Math.max(worst, Math.abs(f.axis === 0 ? v.u(f.i, f.j) : v.v(f.i, f.j)));
-    }
-    expect(worst).toBe(0);
-
-    // The wind is blowing: through a clear column upstream, and downstream of everything.
-    const column = (x: number, y0: number, y1: number) => {
-      let sum = 0;
-      let n = 0;
-      for (let j = Math.floor(y0 * height); j < Math.floor(y1 * height); j++) {
-        sum += v.u(Math.round(x * width), j);
-        n++;
+      const faces = solidFaces(v, solid);
+      expect(faces.length).toBeGreaterThan(150);
+      let worst = 0;
+      for (const f of faces) {
+        worst = Math.max(worst, Math.abs(f.axis === 0 ? v.u(f.i, f.j) : v.v(f.i, f.j)));
       }
-      return sum / n;
-    };
-    expect(column(0.12, 0.05, 0.95)).toBeGreaterThan(0.5);
-    expect(column(0.97, 0.05, 0.95)).toBeGreaterThan(0.1);
-    // ... and it goes round the cylinder: above and below it the flow is faster than the wind.
-    expect(column(0.28, 0.33, 0.37)).toBeGreaterThan(1.0);
+      expect(worst).toBe(0);
 
-    // No dye in any shape, and dye did reach the shapes' neighbourhood and beyond.
-    const dye = await readDye(device, fluid);
-    expect(allFinite(dye.data)).toBe(true);
-    const where = dyeInside(dye, solid, fluid.grid);
-    expect(where.inside).toBe(0);
-    expect(where.outside).toBeGreaterThan(20);
-    shapes.destroy();
-    fluid.destroy();
-  });
+      // The wind is blowing: through a clear column upstream, and downstream of everything.
+      const column = (x: number, y0: number, y1: number) => {
+        let sum = 0;
+        let n = 0;
+        for (let j = Math.floor(y0 * height); j < Math.floor(y1 * height); j++) {
+          sum += v.u(Math.round(x * width), j);
+          n++;
+        }
+        return sum / n;
+      };
+      expect(column(0.12, 0.05, 0.95)).toBeGreaterThan(0.5);
+      expect(column(0.97, 0.05, 0.95)).toBeGreaterThan(0.1);
+      // ... and it goes round the cylinder: above and below it the flow is faster than the wind.
+      expect(column(0.28, 0.33, 0.37)).toBeGreaterThan(1.0);
+
+      // No dye in any shape, and dye did reach the shapes' neighbourhood and beyond.
+      const dye = await readDye(device, fluid);
+      expect(allFinite(dye.data)).toBe(true);
+      const where = dyeInside(dye, solid, fluid.grid);
+      expect(where.inside).toBe(0);
+      expect(where.outside).toBeGreaterThan(20);
+      shapes.destroy();
+      fluid.destroy();
+    },
+  );
 
   it('does not leak through a one-cell wall, or round the corners of a closed box of thin walls', async () => {
     const device = await getTestDevice();
