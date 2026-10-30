@@ -41,14 +41,22 @@ npm run deploy     # build and upload dist/ to Cloudflare Pages (project windtem
 
 ## Effects
 
-| Id      | What                                                                                                                                         | Tier |
-| ------- | -------------------------------------------------------------------------------------------------------------------------------------------- | ---- |
-| `hello` | The smallest effect: bunches of flat ribbon streamers hanging from the top of the view, trailing and fluttering in gusts, one instanced draw | A    |
+| Id       | What                                                                                                                                                                | Tier |
+| -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---- |
+| `hello`  | The smallest effect: bunches of flat ribbon streamers hanging from the top of the view, trailing and fluttering in gusts, one instanced draw                        | A    |
+| `banner` | A banner hung from a rod by rings, carrying a line of text, stirring in a breeze: XPBD cloth that only the 3D wind's pressure moves, solved in one dispatch a frame | A    |
 
 ## Layout
 
 ```
-src/gpu/wind/               the wind (twin of src/wgsl/wind.wgsl): gust fronts, lean, flutter
+src/gpu/wind/air.ts         the wind in 3D (twin of src/wgsl/air.wgsl): the log wind profile, gust
+                            fronts carried along, turbulence and veer
+src/gpu/wind/wind.ts        Earth Temple's ground wind (twin of src/wgsl/wind.wgsl)
+src/gpu/cloth/              XPBD cloth in one workgroup, positions in shared memory, the air's
+                            pressure on every cell (cloth.wgsl), its CPU twin, and a face-on camera
+src/gpu/points.ts, glare/,  Moon Temple's energy-conserving points, aperture and glare (via Star Temple)
+  optics/
+src/gpu/sim/, volume/       Fire Temple's 2D and 3D stable fluids, obstacles and volume ray-march kernel
 src/gpu/post/               the HDR tail: bloom, tonemap, colour stage, and Moon Temple's night vision
 src/gpu/hash.ts             twins of the shader hashes, so CPU models make the same random choices
 src/gpu/safety/             dose, the pattern analyser, motion estimate, colour caps and the start gate's rules

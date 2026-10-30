@@ -1,30 +1,54 @@
 {
   "eager": {
     "chunks": 6,
-    "raw": 13168,
-    "gzip": 6401
+    "raw": 13940,
+    "gzip": 6698
   },
   "effects": {
+    "banner": {
+      "chunks": 14,
+      "ownGzip": 22933,
+      "gzip": 51490,
+      "raw": 120355,
+      "files": [
+        "assets/air-BBBglpVW.js",
+        "assets/banner-BFiodfEz.js",
+        "assets/banner-BN7PjJWQ.js",
+        "assets/colour-caps-rW91Sa46.js",
+        "assets/dose-D7hN0jZo.js",
+        "assets/fullscreen-BDXEFvdz.js",
+        "assets/gamut-COkJmrKM.js",
+        "assets/hash-bWx0F85T.js",
+        "assets/oklab-CS7oj3eq.js",
+        "assets/profiler-Bi27xYp-.js",
+        "assets/shader-xzRCRHTt.js",
+        "assets/tail-BV_mUMID.js",
+        "assets/thinfilm-Ci8F6ZWx.js",
+        "assets/types-ci2WwWg0.js"
+      ],
+      "gzipKb": 50.3
+    },
     "hello": {
-      "chunks": 12,
-      "ownGzip": 16219,
-      "gzip": 27614,
-      "raw": 71350,
+      "chunks": 13,
+      "ownGzip": 1082,
+      "gzip": 27989,
+      "raw": 71493,
       "files": [
         "assets/colour-caps-rW91Sa46.js",
         "assets/dose-D7hN0jZo.js",
         "assets/fullscreen-BDXEFvdz.js",
         "assets/gamut-COkJmrKM.js",
         "assets/hash-bWx0F85T.js",
-        "assets/hello-CGrE33gs.js",
+        "assets/hello-CBtAfvaR.js",
         "assets/oklab-CS7oj3eq.js",
         "assets/profiler-Bi27xYp-.js",
         "assets/shader-xzRCRHTt.js",
         "assets/streamers-zTrX67vY.js",
+        "assets/tail-BV_mUMID.js",
         "assets/thinfilm-Ci8F6ZWx.js",
         "assets/types-ci2WwWg0.js"
       ],
-      "gzipKb": 27
+      "gzipKb": 27.3
     }
   }
 }

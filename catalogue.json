@@ -27,6 +27,35 @@
           "The template for new effects"
         ]
       }
+    },
+    {
+      "id": "banner",
+      "title": "Banner",
+      "summary": "A banner hung from a rod by rings across a section heading, carrying its text, stirring in a breeze: XPBD cloth whose every cell the 3D wind pushes on, with light through the fabric and a sheen.",
+      "epic": "3",
+      "tier": "A",
+      "tags": [
+        "cloth",
+        "text"
+      ],
+      "status": "demo",
+      "poster": "src/effects/banner/poster.webp",
+      "scorecard": {
+        "compute": true,
+        "mobile": "untested",
+        "flash": "low",
+        "pattern": "none",
+        "lightPage": "yes",
+        "features": {
+          "required": []
+        },
+        "fallback": "The heading in CSS with a gentle skew wave, or the poster.",
+        "useCases": [
+          "A section heading",
+          "An event or festival header",
+          "A shop sign"
+        ]
+      }
     }
   ]
 }

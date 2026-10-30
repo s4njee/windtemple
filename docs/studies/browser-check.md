@@ -12,6 +12,7 @@ The HUD time is not the number the cost studies report. It is one frame measured
 
 | Effect | Started | Animates | HUD at 1080p |
 | --- | ---: | --- | --- |
-| hello | 8 of 8 | yes | 60 fps, 0.52 ms (0.42 to 0.78 over 3 loads) |
+| banner | 8 of 8 | yes | 60 fps, 1.59 ms (1.56 to 1.62 over 3 loads) |
+| hello | 8 of 8 | yes | 60 fps, 0.44 ms (0.39 to 0.48 over 3 loads) |
 
 No view logged a console error.

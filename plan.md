@@ -123,6 +123,10 @@ These findings shape this plan, so they need not be rediscovered.
 
 - **Bright streamers are a grating, even jittered.** Earth Temple's fix for its row of blades, jittered roots over three slots, was not enough here. Its blades were dim green against the page, and pastel ribbons are bright. Streamers tied that way read pattern `high`, and so did even bunches of five, which were small gratings of about 10 px. What passed was bunches of three at random angles, with depth: far streamers shorter, narrower and dimmer, so the row is not one layer of equal stripes. It reads `low` (0.17 of the area limit), and no preset is over. Every row of bright things here (bunting, prayer flags, tassels, smoke wires) will need the same: depth, randomness and gaps, not just jitter.
 - **Trailing streamers drift.** At the strong dose, streamers trailing downwind read 0.051 whole-field drift, just over the cap of 0.05. The strong end's wind was lowered.
+- **Flags flap on their own.** The air's pressure on each cell of the cloth, and nothing else, is enough: a flag nudged once and left in a perfectly steady wind dies down below about 2 m/s and keeps flapping above it, faster in a stronger wind (f·L/U about 0.27), in waves that run to the free edge and grow. A flag exactly in line with a steady wind feels nothing and never starts, so the wind needs its veer and turbulence.
+- **On the GPU, a small cloth is a latency problem, not an arithmetic one.** A dispatch costs about 5 µs in Chrome, so a dispatch per constraint colour per substep would be a millisecond of overhead. One dispatch a frame, with the positions in shared memory, cut the banner's cloth from 2.26 ms to 0.76 ms at 120 Hz, together with sampling the wind once a frame and a coarser grid.
+- **Sample the wind once a frame.** The wind varies over metres and seconds, and sampling it every substep at every corner of every cell was most of the solver's cost. The cloth's own velocity, which the pressure depends on as much, is still taken every substep.
+- **Lettering is a grating.** Condensed capitals across a banner are a row of evenly spaced stems. At 42% of the banner's depth they read pattern `high`, worse when the cloth hangs flat and when it moves. At 30% they read `none` at full contrast. Every heading on cloth or in the sky starts from that size.
 
 ## Overlaps and who owns what
 
@@ -248,9 +252,9 @@ Story format: `ID Title [tier] (size)`. Sizes: S ≈ a day or less, M ≈ a few 
 
 - [ ] **1.5 Posters, catalogue and the holofx site** (S) — posters from held frames, `catalogue.json`, and Wind Temple in the holofx site's dropdown, lab and effect pages.
 
-  _`hello`'s poster (6 kB) and `catalogue.json` done. Still to do: the holofx site._
+  _Posters for `hello` and `banner`, and `catalogue.json`, done. Still to do: the holofx site._
 
-- [ ] **1.6 Support matrix delta** (S) — what this family leans on beyond Fire Temple's [support matrix](../firetemple/docs/support-matrix.md) and Earth Temple's [delta](../earthtemple/docs/support-matrix.md):
+- [x] **1.6 Support matrix delta** (S) — what this family leans on beyond Fire Temple's [support matrix](../firetemple/docs/support-matrix.md) and Earth Temple's [delta](../earthtemple/docs/support-matrix.md):
   - `maxComputeWorkgroupStorageSize` (16 KiB by default) and `maxComputeInvocationsPerWorkgroup` (256), for a small cloth solved in one workgroup;
   - the cost of a dispatch, and of many small dispatches in one compute pass, for XPBD's substeps;
   - `dispatchWorkgroupsIndirect`, for confetti and flocks whose counts change;
@@ -258,14 +262,22 @@ Story format: `ID Title [tier] (size)`. Sizes: S ≈ a day or less, M ≈ a few 
   - `float32-filterable`, for air velocity textures;
   - `subgroups` where offered, for flock neighbour reductions;
   - timestamp queries inside compute passes, to time substeps.
-- [ ] **1.7 Point-source renderer** (S) — Moon Temple's energy-conserving points, aperture and glare, from Star Temple's port (its 1.7), in `src/gpu/points/`. Tested as there: a moving point's total energy holds steady across pixels.
-- [ ] **1.8 Fire Temple's solvers and kernel** (S) — the 2D and 3D stable-fluids solvers, MacCormack advection, vorticity confinement, smoke shading and the volume ray-march kernel, ported with their tests, for Epics 6 and 8.
+
+  _[docs/support-matrix.md](docs/support-matrix.md), by `node experiments/support-probe.mjs` in headless Chrome 156 on this Mac. A full 16 KiB workgroup array works (32 KiB is offered, the default is asked for). A trivial dispatch costs 4.5 to 4.9 µs: a dispatch per constraint colour per substep would be 1.1 ms a frame of overhead alone, which is why the cloth runs in one. Indirect dispatch works from counts written in a separate pass; written, or merely bound as storage, in the pass that reads them, it is a validation error. Fixed-point sums by `u32` atomics are exact. `float32-filterable`, `subgroups` and timestamps in compute passes are offered._
+
+- [x] **1.7 Point-source renderer** (S) — Moon Temple's energy-conserving points, aperture and glare, from Star Temple's port (its 1.7), in `src/gpu/points/`. Tested as there: a moving point's total energy holds steady across pixels.
+
+  _Copied from Star Temple's committed tree (71e7279): `src/gpu/points.ts` and its shader, `glare/`, `optics/aperture.ts` and `shapes.ts`, `src/wgsl/aperture.wgsl`, with `tests/points.test.ts` and `tests/glare.test.ts`, which pass here unchanged. Nothing uses them yet._
+
+- [x] **1.8 Fire Temple's solvers and kernel** (S) — the 2D and 3D stable-fluids solvers, MacCormack advection, vorticity confinement, smoke shading and the volume ray-march kernel, ported with their tests, for Epics 6 and 8.
+
+  _Copied from Fire Temple's committed tree: `src/gpu/sim/` (2D and 3D stable fluids, multigrid pressure, obstacles and their shapes, the stirring helper), `src/gpu/volume/` (the reduced-resolution volume kernel, blue-noise jitter, depth-aware upsampling), `src/gpu/scene/camera.ts`, the half-float helpers, and the `fluid`, `smoke` and `volume` chunks, with their tests and Fire Temple's `library.ts` and `wgsl-eval.ts` test helpers. 181 tests pass here. Fire Temple's firelight half of its smoke-light tests is not ported. Nothing uses them yet._
 
 ## Epic 2 — The cloth engine
 
 The engine behind every flag, banner, curtain and sail, and the part that has to be right. Position-based dynamics as games use it (Müller et al.; Macklin et al.), with aerodynamics on every triangle, rebuilt for WebGPU and measured. Its flapping must come out of the cloth and the air, never be painted on.
 
-- [ ] **2.1 The wind in 3D** [—] (M) — `src/gpu/wind/`. Earth Temple's ground wind (its 2.4) widened:
+- [x] **2.1 The wind in 3D** [—] (M) — `src/gpu/wind/`. Earth Temple's ground wind (its 2.4) widened:
   - a wind that grows with height, by the log wind profile;
   - gusts as fronts of 3D noise carried along the wind, with a turbulence intensity;
   - a slow veer;
@@ -273,7 +285,9 @@ The engine behind every flag, banner, curtain and sail, and the part that has to
 
   The wind stays stateless. Tested: the shader matches its twin; the mean speed grows with height as the profile says; points a metre apart move together and points tens of metres apart do not.
 
-- [ ] **2.2 XPBD cloth** [—] (L) — `src/gpu/cloth/`. Particles on a grid mesh, with:
+  _`src/wgsl/air.wgsl` and its twin `src/gpu/wind/air.ts`: the log wind profile (4 m/s at 10 m over grass by default), gust fronts of 3D value noise carried along at the mean speed and stretched across the wind, turbulence in three components (the vertical half the others) scaled to the asked-for intensity (the noise's measured rms is 0.185, so it is scaled by 5.4), and a slow veer. Tested (`tests/air.test.ts`): the shader matches its twin within 2e-4 of the speed; the mean follows the profile; the turbulence is within 15% of what is asked; speeds a metre apart correlate above 0.8, and 60 m apart across the wind below 0.3._
+
+- [x] **2.2 XPBD cloth** [—] (L) — `src/gpu/cloth/`. Particles on a grid mesh, with:
   - stretch and shear constraints, and bending by an isometric model (Bergou et al.);
   - stiffness as XPBD compliance (Macklin, Müller and Chentanez), so it does not depend on the step or the iteration count;
   - small steps: many substeps of one iteration each, the frame's time split evenly and clamped at low frame rates;
@@ -289,7 +303,9 @@ The engine behind every flag, banner, curtain and sail, and the part that has to
   - the GPU matches the twin;
   - a run at 15 fps stays stable and close to one at 60.
 
-- [ ] **2.3 Aerodynamics** [—] (M) — the force of the air on each triangle, from the wind (2.1) relative to the triangle's own motion:
+  _`src/gpu/cloth/cloth.{ts,wgsl}`. One of the three solvers is built: the whole frame's substeps in one dispatch of one workgroup of 256, positions in its shared memory (so a cloth is at most 1,024 particles), constraints in twelve colours of Gauss–Seidel with a workgroup barrier between them. The probe (1.6) puts a dispatch at about 5 µs, so the dispatch-per-colour and Jacobi solvers are left for 2.8 to compare. Bending is distances across two cells, not Bergou's isometric model, which is still to try. The default substep is 1/960 s: at 1/480 a banner in an 8 m/s gust stretched 13%, at 1/960 2%. A weighted hem is an option (`weight`). Tested (`tests/cloth.test.ts`): the GPU matches the twin within half a millimetre after half a second of gusty wind; a hanging banner stretches under 1%; with the air off, a cloth swinging from one corner never gains energy; the answer converges as substeps shrink from 1/240 to 1/1920; a run at 15 fps stays finite, under 5% stretch, and its centre within 5 cm of the 60 fps run's. Not the same run: the wind is sampled once a frame (2.3)._
+
+- [x] **2.3 Aerodynamics** [—] (M) — the force of the air on each triangle, from the wind (2.1) relative to the triangle's own motion:
   - pressure drag along the normal, which grows with the square of the speed across the face;
   - a weaker friction along it.
 
@@ -298,6 +314,8 @@ The engine behind every flag, banner, curtain and sail, and the part that has to
   - in a steady wind a flag past its critical speed flaps, and below it does not;
   - the flapping frequency grows in proportion to the wind speed, at a Strouhal-like constant to compare with 2.9's video;
   - waves run from the pole to the free edge and grow along the way.
+
+  _In `cloth.wgsl`: each cell is a flat plate, pushed along its normal by ½ρ C_n A v_n|v_n| (C_n 1.1) of the wind relative to the cloth, with a weak friction along it (C_t 0.02); a quarter goes to each corner. The wind is sampled once a frame at each cell's centre, and the cloth's own velocity every substep: sampling the wind every substep at every corner was most of the solver's cost. Tested on a 1 × 0.6 m flag on a pole (`tests/flutter.test.ts`), nudged by one second of turbulence and then left in a perfectly steady wind: with no wind it hangs still; at 1 m/s the nudge dies away; at 4, 8 and 12 m/s it keeps flapping, as large in the last four seconds as in the first, so the flutter is an instability of the cloth and the air, not the nudge decaying; f·L/U is 0.20, 0.27 and 0.27, within 15% between 8 and 12 m/s; the phase lags at every step from the pole to the free edge, and the amplitude grows. Comparing those numbers with real flags is 2.9's. A flag hung exactly in line with a steady wind feels no force at all and never starts: it needs the veer or turbulence the default wind has._
 
 - [ ] **2.4 Pins, attachments and colliders** [—] (M) — the ways cloth is held and touched:
   - pinned edges and corners;
@@ -348,7 +366,10 @@ The engine behind every flag, banner, curtain and sail, and the part that has to
 
 ## Epic 3 — Flags, banners and curtains
 
-- [ ] **3.1 `banner`** [A → B] (S) — the drop-in: a pennant or a banner hanging across a section heading, carrying the heading's text or the page's logo, stirring in a soft breeze. Small enough for one workgroup. Compared with a CSS wave in 3.9.
+- [x] **3.1 `banner`** [A → B] (S) — the drop-in: a pennant or a banner hanging across a section heading, carrying the heading's text or the page's logo, stirring in a soft breeze. Small enough for one workgroup. Compared with a CSS wave in 3.9.
+
+  _`banner`: 2.4 × 0.8 m of cotton, 37 × 13 particles, hung by rings every fourth particle, with a hem four times as heavy, carrying a line of text (default "Wind Temple") from the text field. Fabrics cotton, silk and canvas; colours lilac, navy, cream and crimson. Drawn by vertex pulling into a 4× multisampled target, two-sided, with light through the fabric, a sheen, and a wooden rod. Settled for 2.5 s before its first frame, and again in a calm wind when motion is held. 0.42 ms on Dawn, 1.59 ms in Chrome (1.56 to 1.62 over 3 loads), the cloth's pass 0.76 ms at 120 Hz: **Tier A**. The cloth first cost 2.26 ms in Chrome at 120 Hz. Sampling the wind once a cell a frame took it to 1.50, shared memory to 1.00, and a coarser grid to 0.76. Lettering at 42% of the depth read pattern `high` (condensed capitals are a row of stems); at 30% it reads `none` at full contrast. Flash `low` (one cell, once in four seconds, the edge over a dark page). The CSS comparison is 3.9's._
+
 - [ ] **3.2 `flag`** [B] (M) — a flag on a pole in a steady wind with gusts, carrying an image the page gives, against a sky:
   - presets for silk, cotton and heavy canvas;
   - the pointer turns the wind;

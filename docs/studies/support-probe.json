@@ -1,0 +1,35 @@
+{
+  "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36",
+  "adapter": {
+    "vendor": "apple",
+    "architecture": "metal-3",
+    "description": ""
+  },
+  "features": {
+    "float32-filterable": true,
+    "timestamp-query": true,
+    "shader-f16": true,
+    "subgroups": true
+  },
+  "limits": {
+    "maxComputeWorkgroupStorageSize": 32768,
+    "maxComputeInvocationsPerWorkgroup": 1024,
+    "maxComputeWorkgroupSizeX": 1024,
+    "maxStorageBufferBindingSize": 4294967292,
+    "maxStorageBuffersPerShaderStage": 10
+  },
+  "sharedArray": {
+    "expected": 523776,
+    "got": 523776
+  },
+  "indirectAndFixedPoint": {
+    "expected": 270336,
+    "got": 270336
+  },
+  "dispatch": {
+    "oneMs": 0.009167,
+    "manyMs": 1.208496,
+    "perDispatchUs": 5.0181129707112975
+  },
+  "errors": []
+}

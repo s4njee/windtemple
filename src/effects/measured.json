@@ -1,4 +1,15 @@
 {
+  "banner": {
+    "gpuMs": [
+      {
+        "device": "Apple M1 Max",
+        "deviceClass": "apple-silicon",
+        "method": "marginal",
+        "ms": 0.42
+      }
+    ],
+    "bundleKb": 50.3
+  },
   "hello": {
     "gpuMs": [
       {
@@ -8,6 +19,6 @@
         "ms": 0.31
       }
     ],
-    "bundleKb": 27
+    "bundleKb": 27.3
   }
 }
